@@ -1,15 +1,16 @@
 import { createStore, applyMiddleware, compose } from "redux";
-import thunk from 'redux-thunk';
+import createSagaMiddleware from "redux-saga";
 import reducer from "./reducer";
+import todoSagas from './sagas'
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ 
-  ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}) 
-  : compose;
+const sagaMiddleware = createSagaMiddleware()
 
-// 使用 composeEnhancers 来组合中间件
-const enhancer = composeEnhancers(applyMiddleware(thunk));
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}) : compose;
 
-// 直接将 enhancer 作为第二个参数传递给 createStore
+const enhancer = composeEnhancers(applyMiddleware(sagaMiddleware))
+
 const store = createStore(reducer, enhancer);
+
+sagaMiddleware.run(todoSagas)
 
 export default store;
